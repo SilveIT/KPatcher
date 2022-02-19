@@ -1,6 +1,9 @@
 # KPatcher
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![KPatcher configuration window](Assets/ConfigWindow.png)
+
 ## Information
 This project doesn't contain any source code or any part from the Krisp app. Its work is based on code overrides.
 \
