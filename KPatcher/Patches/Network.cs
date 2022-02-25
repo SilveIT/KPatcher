@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -83,7 +84,7 @@ namespace KPatcher.Patches
                     "Cancel", "Proceed anyway");
                 pass = res == MessageBoxResult.OK;
             }
-            else if (url.StartsWith("/auth/logout"))
+            else if (url.StartsWith("/auth/logout") || url.StartsWith("/notification"))
                 pass = !Settings.Default.OfflineMode;
             else if (url.StartsWith("/user/minutes") || url.StartsWith("/auth/token"))
             {
@@ -112,7 +113,6 @@ namespace KPatcher.Patches
     /// <summary>
     /// Replaces InstallationInfo synchronization logic when offline
     /// </summary>
-    //IRestResponse<KrispSDKResponse<InstallationInfo>> restResponse = KrispSDKFactory.Instance.DoRequest<InstallationInfo>(new InstallationRequestInfo());
     [TypeRequired("Krisp.BackEnd.InstallationInfo", "KrispAwsSDK:DoRequest<InstallationInfo> method patch")]
     [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoRequest", "KrispAwsSDK:DoRequest<InstallationInfo> method patch")]
     [HarmonyPatch]
@@ -146,7 +146,6 @@ namespace KPatcher.Patches
     /// <summary>
     /// Replaces InstallationInfo synchronization logic when offline
     /// </summary>
-    //KrispSDKFactory.Instance.DoAsyncRequest<InstallationInfo>(new InstallationRequestInfo(), new Action<KrispSDKResponse<InstallationInfo>, object>(this.CreateInstallationAsyncResponseHandler), this._cancellationTokenSource.Token);
     [TypeRequired("Krisp.BackEnd.InstallationInfo", "KrispAwsSDK:DoAsyncRequest<Krisp.BackEnd.InstallationInfo> method patch")]
     [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<Krisp.BackEnd.InstallationInfo> method patch")]
     [HarmonyPatch]
@@ -176,7 +175,6 @@ namespace KPatcher.Patches
     /// <summary>
     /// VersionInfo request patches
     /// </summary>
-    //KrispSDKFactory.Instance.DoAsyncRequest<VersionInfo>(requestInfo, new Action<KrispSDKResponse<VersionInfo>, object>(this.CheckForUpdateAsyncResponseHandler), this._cancellationTokenSource.Token);
     [TypeRequired("Krisp.BackEnd.VersionInfo", "KrispAwsSDK:DoAsyncRequest<VersionInfo> method patch")]
     [PropertyRequired("Krisp.BackEnd.VersionRequestInfo", "endpoint", "KrispAwsSDK:DoAsyncRequest<VersionInfo> method patch")]
     [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<VersionInfo> method patch")]
@@ -215,7 +213,6 @@ namespace KPatcher.Patches
     /// <summary>
     /// Used to patch user account details
     /// </summary>
-    //KrispSDKFactory.Instance.DoAsyncRequest<UserProfileInfo>(new UserProfileRequestInfo(this._data.AppToken), new Action<KrispSDKResponse<UserProfileInfo>, object>(this.FetchUserProfileAsyncResponseHandler), this._cancellationTokenSource.Token);
     [TypeRequired("Krisp.BackEnd.UserProfileInfo", "KrispAwsSDK:DoAsyncRequest<UserProfileInfo> method patch")]
     [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<UserProfileInfo> method patch")]
     [HarmonyPatch]
@@ -249,7 +246,34 @@ namespace KPatcher.Patches
     /// <summary>
     /// This patch is required to check if everything works fine
     /// </summary>
-    //KrispSDKFactory.Instance.DoAsyncRequest<AppTokenInfo>(new LoginRequestInfo(this.GenerateJwt(), oneTimeToken), new Action<KrispSDKResponse<AppTokenInfo>, object>(this.LoginWithOneTimeTokenAsyncResponseHandler), this._cancellationTokenSource.Token);
+    [TypeRequired("Krisp.BackEnd.NotificationInfo", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
+    [TypeRequired("Krisp.BackEnd.NotificationResponse", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
+    [PropertyRequired("Krisp.BackEnd.NotificationInfo", "ref_string", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
+    [PropertyRequired("Krisp.BackEnd.NotificationInfo", "notifications", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
+    [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
+    [HarmonyPatch]
+    public class DoAsyncRequestNotificationInfoPatch
+    {
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static MethodBase TargetMethod() => R.M[0].MakeGenericMethod(R.T[0]);
+        public static bool Prefix(object requestInfo, Action<object, object> callback, CancellationToken cancellationToken = default)
+        {
+            if (Settings.Default.BlockNetwork || Settings.Default.OfflineMode)
+            {
+                Console.WriteLine("Requested NotificationInfo async");
+                var notificationInfo = Activator.CreateInstance(R.T[0]);
+                var notificationResponseList = Activator.CreateInstance(typeof(List<>).MakeGenericType(R.T[1]));
+                R.P[0].SetValue(notificationInfo, "SilveIT");
+                R.P[1].SetValue(notificationInfo, notificationResponseList);
+                Console.WriteLine("Generated NotificationInfo async, calling callback...");
+                callback(notificationInfo, null);
+                return false;
+            }
+            return true;
+        }
+    }
+
+
     [TypeRequired("Krisp.BackEnd.AppTokenInfo", "KrispAwsSDK:DoAsyncRequest<AppTokenInfo> method patch")]
     [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<AppTokenInfo> method patch")]
     [HarmonyPatch]
