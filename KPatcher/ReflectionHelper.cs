@@ -169,7 +169,7 @@ namespace KPatcher
                                 if (args.ArgumentCount != -1)
                                     p = AccessTools.FirstMethod(t,
                                         info => info.Name == methodName &&
-                                                info.GetGenericArguments().Length == args.ArgumentCount);
+                                                info.GetParameters().Length == args.ArgumentCount);
                                 else
                                     p = AccessTools.FirstMethod(t, info => info.Name == methodName);
                             }
