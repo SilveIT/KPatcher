@@ -213,19 +213,23 @@ namespace KPatcher
         [PropertyRequired("Krisp.BackEnd.Team", "id", "UserProfileInfo Generator")]                                 //2
         [PropertyRequired("Krisp.BackEnd.Team", "name", "UserProfileInfo Generator")]                               //3
         [PropertyRequired("Krisp.BackEnd.UpdateSetting", "prevent_update", "UserProfileInfo Generator")]            //4
-        [PropertyRequired("Krisp.BackEnd.NCOutSetting", "pnc", "UserProfileInfo Generator")]                        //5
-        [PropertyRequired("Krisp.BackEnd.BaseProfileSetting", "available", "UserProfileInfo Generator")]            //6
-        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "contact_support", "UserProfileInfo Generator")]         //7
-        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "report_problem", "UserProfileInfo Generator")]          //8
-        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "update", "UserProfileInfo Generator")]                  //9
-        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "nc_in", "UserProfileInfo Generator")]                   //10
-        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "nc_out", "UserProfileInfo Generator")]                  //11
-        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "email", "UserProfileInfo Generator")]                   //12
-        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "id", "UserProfileInfo Generator")]                      //13
-        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "mode", "UserProfileInfo Generator")]                    //14
-        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "team", "UserProfileInfo Generator")]                    //15
-        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "settings", "UserProfileInfo Generator")]                //16
-        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "ref_string", "UserProfileInfo Generator")]              //17
+        [PropertyRequired("Krisp.BackEnd.NCBalance", "balance", "UserProfileInfo Generator")]                       //5
+        [PropertyRequired("Krisp.BackEnd.NCOutSetting", "krisp_mic_as_default", "UserProfileInfo Generator")]       //6
+        [PropertyRequired("Krisp.BackEnd.NCOutSetting", "minutes_settings", "UserProfileInfo Generator")]           //7
+        [PropertyRequired("Krisp.BackEnd.NCOutSetting", "headset_vc", "UserProfileInfo Generator")]                 //8
+        [PropertyRequired("Krisp.BackEnd.NCOutSetting", "ultrasonic", "UserProfileInfo Generator")]                 //9
+        [PropertyRequired("Krisp.BackEnd.BaseProfileSetting", "available", "UserProfileInfo Generator")]            //10
+        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "contact_support", "UserProfileInfo Generator")]         //11
+        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "report_problem", "UserProfileInfo Generator")]          //12
+        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "update", "UserProfileInfo Generator")]                  //13
+        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "nc_in", "UserProfileInfo Generator")]                   //14
+        [PropertyRequired("Krisp.BackEnd.ProfileSettings", "nc_out", "UserProfileInfo Generator")]                  //15
+        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "email", "UserProfileInfo Generator")]                   //16
+        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "id", "UserProfileInfo Generator")]                      //17
+        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "mode", "UserProfileInfo Generator")]                    //18
+        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "team", "UserProfileInfo Generator")]                    //19
+        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "settings", "UserProfileInfo Generator")]                //20
+        [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "ref_string", "UserProfileInfo Generator")]              //21
         public static class UserProfileInfoGenerator
         {
             // ReSharper disable InconsistentNaming
@@ -236,45 +240,61 @@ namespace KPatcher
             /// <returns></returns>
             public static (object, Type) GenerateUserProfileInfoKrisp(bool updateEnabled)
             {
-                var modePropsProp = R.P[0];
-                var modeNameProp = R.P[1];
-                var teamIDProp = R.P[2];
-                var teamNameProp = R.P[3];
-                var updateSettingPreventUpdateProp = R.P[4];
-                var NCOutSettingPNCProp = R.P[5];
-                var baseSettingAvailableProp = R.P[6];
-                var profileSettingsContactSupportProp = R.P[7];
-                var profileSettingsReportProblemProp = R.P[8];
-                var profileSettingsUpdateProp = R.P[9];
-                var profileSettingsNCInProp = R.P[10];
-                var profileSettingsNCOutProp = R.P[11];
+                var modePropsProp = R.P[0]; //"Krisp.BackEnd.Mode", "props"
+                var modeNameProp = R.P[1]; //"Krisp.BackEnd.Mode", "name"
+                var teamIDProp = R.P[2]; //"Krisp.BackEnd.Team", "id"
+                var teamNameProp = R.P[3]; //"Krisp.BackEnd.Team", "name"
+                var updateSettingPreventUpdateProp = R.P[4]; //"Krisp.BackEnd.UpdateSetting", "prevent_update"
+
+                var NCBalanceBalanceProp = R.P[5];
+
+                //var NCOutSettingMicDefaultProp = R.P[6]; //"Krisp.BackEnd.NCOutSetting", "krisp_mic_as_default"
+                var NCOutSettingMinutesProp = R.P[7]; //"Krisp.BackEnd.NCOutSetting", "minutes_settings"
+                //var NCOutSettingHeadsetVCProp = R.P[8]; //"Krisp.BackEnd.NCOutSetting", "headset_vc"
+                //var NCOutSettingUltrasonicProp = R.P[9]; //"Krisp.BackEnd.NCOutSetting", "ultrasonic"
+
+                var baseSettingAvailableProp = R.P[10]; //"Krisp.BackEnd.BaseProfileSetting", "available"
+                var profileSettingsContactSupportProp = R.P[11]; //"Krisp.BackEnd.ProfileSettings", "contact_support"
+                var profileSettingsReportProblemProp = R.P[12]; //"Krisp.BackEnd.ProfileSettings", "report_problem"
+                var profileSettingsUpdateProp = R.P[13]; //"Krisp.BackEnd.ProfileSettings", "update"
+                var profileSettingsNCInProp = R.P[14]; //"Krisp.BackEnd.ProfileSettings", "nc_in"
+                var profileSettingsNCOutProp = R.P[15]; //"Krisp.BackEnd.ProfileSettings", "nc_out"
                 var NCInStateProp = AccessTools.Property(profileSettingsNCInProp.PropertyType, "state");
                 var NCOutStateProp = AccessTools.Property(profileSettingsNCOutProp.PropertyType, "state");
-                var infoEmailProp = R.P[12];
-                var infoIdProp = R.P[13];
-                var infoModeProp = R.P[14];
-                var infoTeamProp = R.P[15];
-                var infoSettingsProp = R.P[16];
-                var infoRefStringProp = R.P[17];
+                var infoEmailProp = R.P[16]; //"Krisp.BackEnd.UserProfileInfo", "email"
+                var infoIdProp = R.P[17]; //"Krisp.BackEnd.UserProfileInfo", "id"
+                var infoModeProp = R.P[18]; //"Krisp.BackEnd.UserProfileInfo", "mode"
+                var infoTeamProp = R.P[19]; //"Krisp.BackEnd.UserProfileInfo", "team"
+                var infoSettingsProp = R.P[20]; //"Krisp.BackEnd.UserProfileInfo", "settings"
+                var infoRefStringProp = R.P[21]; //"Krisp.BackEnd.UserProfileInfo", "ref_string"
 
-                var userProfileInfo = Activator.CreateInstance(R.T[12]);
-                var mode = Activator.CreateInstance(R.T[0]);
-                var team = Activator.CreateInstance(R.T[2]);
-                var settings = Activator.CreateInstance(R.T[7]);
-                var contact_support = Activator.CreateInstance(R.T[6]);
-                var report_problem = Activator.CreateInstance(R.T[6]);
-                var update = Activator.CreateInstance(R.T[4]);
+                var userProfileInfo = Activator.CreateInstance(R.T[16]); //"Krisp.BackEnd.UserProfileInfo", "email"
+                var mode = Activator.CreateInstance(R.T[0]); //"Krisp.BackEnd.Mode", "props"
+                var team = Activator.CreateInstance(R.T[2]); //"Krisp.BackEnd.Team", "id"
+                var settings = Activator.CreateInstance(R.T[11]); //"Krisp.BackEnd.ProfileSettings", "contact_support"
+                var contact_support = Activator.CreateInstance(R.T[10]); //"Krisp.BackEnd.BaseProfileSetting", "available"
+                var report_problem = Activator.CreateInstance(R.T[10]); //"Krisp.BackEnd.BaseProfileSetting", "available"
+                var update = Activator.CreateInstance(R.T[4]); //"Krisp.BackEnd.UpdateSetting", "prevent_update"
                 var nc_in = Activator.CreateInstance(profileSettingsNCInProp.PropertyType); //Was different type in the old version of the target app
-                var nc_out = Activator.CreateInstance(R.T[5]);
-                var pnc = Activator.CreateInstance(R.T[6]);
+                var nc_out = Activator.CreateInstance(profileSettingsNCOutProp.PropertyType);
 
-                baseSettingAvailableProp.SetValue(pnc, true);
+                //var krisp_mic_as_default = Activator.CreateInstance();
+                var minutes_settings = Activator.CreateInstance(R.T[5]); //"Krisp.BackEnd.NCBalance", "balance"
+                //var headset_vc = Activator.CreateInstance();
+                //var ultrasonic = Activator.CreateInstance();
+
+                NCBalanceBalanceProp.SetValue(minutes_settings, 1337U);
+
+                //NCOutSettingMicDefaultProp.SetValue(nc_out, krisp_mic_as_default);
+                NCOutSettingMinutesProp.SetValue(nc_out, minutes_settings);
+                //NCOutSettingHeadsetVCProp.SetValue(nc_out, headset_vc);
+                //NCOutSettingUltrasonicProp.SetValue(nc_out, ultrasonic);
+
                 baseSettingAvailableProp.SetValue(nc_out, true);
                 baseSettingAvailableProp.SetValue(update, updateEnabled);
                 baseSettingAvailableProp.SetValue(report_problem, true);
                 baseSettingAvailableProp.SetValue(contact_support, true);
 
-                NCOutSettingPNCProp.SetValue(nc_out, pnc);
                 NCOutStateProp?.SetValue(nc_out, "user_choice");
                 NCInStateProp?.SetValue(nc_in, "user_choice");
 
@@ -299,7 +319,7 @@ namespace KPatcher
                 infoSettingsProp.SetValue(userProfileInfo, settings);
                 infoRefStringProp.SetValue(userProfileInfo, "SilveIT");
 
-                return MakeKrispResponse(userProfileInfo, R.T[12]);
+                return MakeKrispResponse(userProfileInfo, R.T[16]);
             }
 
             /// <summary>

@@ -84,6 +84,32 @@ namespace KPatcher.Patches
         }
     }
 
+    [MethodRequired("Krisp.Analytics.AnalyticsManager", "Pause", "AnalyticsManager:Pause method patch")]
+    [HarmonyPatch]
+    public class AnalyticsManager_PausePatch
+    {
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static MethodBase TargetMethod() => R.M[0];
+        public static bool Prefix()
+        {
+            Console.WriteLine(nameof(AnalyticsManager_PausePatch));
+            return false;
+        }
+    }
+
+    [MethodRequired("Krisp.Analytics.AnalyticsManager", "Resume", "AnalyticsManager:Resume method patch")]
+    [HarmonyPatch]
+    public class AnalyticsManager_ResumePatch
+    {
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static MethodBase TargetMethod() => R.M[0];
+        public static bool Prefix()
+        {
+            Console.WriteLine(nameof(AnalyticsManager_ResumePatch));
+            return false;
+        }
+    }
+
     [MethodRequired("Krisp.Analytics.AnayticEventsSender", "Send", "Krisp.Analytics.AnayticEventsSender:Send method patch")]
     [HarmonyPatch]
     public class AnayticEventsSender_SendPatch
@@ -95,30 +121,6 @@ namespace KPatcher.Patches
             Console.WriteLine(nameof(AnayticEventsSender_SendPatch));
             __result = true;
             return false;
-        }
-    }
-
-    [MethodRequired("Krisp.App.KrispApp", "Main", "KrispApp:Main method patch")]
-    [HarmonyPatch]
-    public class KrispApp_MainSentryPatch
-    {
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static MethodBase TargetMethod() => R.M[0];
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var found = false;
-            foreach (var instruction in instructions)
-            {
-                if (!found && instruction.opcode == OpCodes.Ldstr && ((string)instruction.operand).Contains("sentry.io"))
-                {
-                    yield return new CodeInstruction(OpCodes.Ldnull);
-                    found = true;
-                    continue;
-                }
-                yield return instruction;
-            }
-            if (!found)
-                Console.WriteLine("Cannot find Sentry init in KrispApp:Main");
         }
     }
 }

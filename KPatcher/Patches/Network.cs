@@ -29,13 +29,21 @@ namespace KPatcher.Patches
         public static MethodBase TargetMethod() => R.M[0];
         public static bool Prefix(ref string uri, bool dontEscape, UriKind uriKind)
         {
+            if (uri.Contains("sentry.io"))
+            {
+                Console.WriteLine("Sentry URL blocked");
+                uri = "https://SilveIT@0.0.0.0/1337";
+                return true;
+            }
             if (!Settings.Default.BlockNetwork)
                 return true;
             if (!uri.StartsWith("http:") && !uri.StartsWith("https:") ||
                 uri.StartsWith("http://defaultcontainer") || //Trying to not shoot in the leg...
                 uri.StartsWith("http://foo/") ||
                 uri.StartsWith("http://schemas.") ||
-                uri.StartsWith("http://0.0.0.0")) //Remove to see if something is trying to create already patched URLs
+                uri.StartsWith("http://0.0.0.0") ||
+                uri.StartsWith("https://0.0.0.0") ||
+                uri.StartsWith("https://SilveIT@0.0.0.0")) //Remove to see if something is trying to create already patched URLs
                 return true;
             Console.WriteLine("URL creation blocked: " + uri);
             uri = "http://0.0.0.0";
@@ -74,7 +82,7 @@ namespace KPatcher.Patches
             Console.WriteLine("Requested: " + url);
             if (url.StartsWith("/version/"))
                 pass = Settings.Default.EnableUpdates;
-            else if (url.StartsWith("resource")) 
+            else if (url.StartsWith("resource") || url.Contains("headset_lists")) 
                 pass = true;
             else if (url.StartsWith("/report/problem") || HasDebugInfo(request))
             {
