@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows;
 using HarmonyLib;
@@ -66,32 +67,31 @@ namespace KPatcher.Patches
         public static MethodBase TargetMethod() => R.M[0];
         public static bool Prefix(ref object request)
         {
-            //To debug request details
-            //var serializeOptions = new JsonSerializerOptions
-            //{
-            //    WriteIndented = true,
-            //    ReferenceHandler = ReferenceHandler.Preserve,
-            //    IgnoreReadOnlyProperties = true
-            //};
-            //Console.WriteLine(JsonSerializer.Serialize(request, serializeOptions));
+            var serializeOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                ReferenceHandler = ReferenceHandler.Preserve,
+                IgnoreReadOnlyProperties = true
+            };
+            var jsonRequest = JsonSerializer.Serialize(request, serializeOptions);
+            //Console.WriteLine(jsonRequest);
 
             if (Settings.Default.BlockNetwork) return false;
 
             var url = (string)R.P[0].GetValue(request);
-            var pass = false;
+            bool pass;
             Console.WriteLine("Requested: " + url);
-            if (url.StartsWith("/version/"))
+            if (jsonRequest.Contains("Bearer"))
+            {
+                pass = false;
+                Console.WriteLine("Request contains authorization, blocking...");
+            }
+            else if (url.StartsWith("/version/")) //TODO fix update system
                 pass = Settings.Default.EnableUpdates;
             else if (url.StartsWith("resource") || url.Contains("headset_lists")) 
                 pass = true;
-            else if (url.StartsWith("/report/problem") || HasDebugInfo(request))
-            {
-                var res = Utils.ShowDialog("Are you sure?",
-                    "You are about to upload your personal data to the external web servers.\r\n" +
-                    "Please proceed only when you are 100% sure of what you are doing!",
-                    "Cancel", "Proceed anyway");
-                pass = res == MessageBoxResult.OK;
-            }
+            else if (url.StartsWith("/report/problem") || jsonRequest.Contains("application/zip"))
+                pass = false;
             else if (url.StartsWith("/auth/logout") || url.StartsWith("/notification"))
                 pass = !Settings.Default.OfflineMode;
             else if (url.StartsWith("/user/minutes") || url.StartsWith("/auth/token"))
@@ -107,12 +107,6 @@ namespace KPatcher.Patches
                 pass = !Settings.Default.OfflineMode && Settings.Default.PassUnknownRequests;
             Console.WriteLine((pass ? "Passing request: " : "Request was blocked: ") + url);
             return pass;
-
-            bool HasDebugInfo(object req)
-            {
-                var prms = (IList)R.P[1].GetValue(req);
-                return prms.Cast<object>().Any(prm => (string)R.P[2].GetValue(prm) == "application/zip");
-            }
         }
     }
 

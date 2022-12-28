@@ -20,10 +20,12 @@ namespace KPatcher.Patches
     [HarmonyPatch]
     public class AccountManager_SetStatePatch
     {
+        public static object AccountManagerInstance { get; private set; }
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static MethodBase TargetMethod() => R.M[0];
-        public static bool Prefix(ref int state, int errorCode)
+        public static bool Prefix(object __instance, ref int state, int errorCode)
         {
+            AccountManagerInstance = __instance;
             var stateType = R.T[0];
             var errorCodeType = R.T[1];
             var stateName = Enum.GetName(stateType, state);
@@ -58,7 +60,7 @@ namespace KPatcher.Patches
             var cacheAppTokenProp = R.P[0];
             var cacheSessionIDProp = R.P[1];
             cacheAppTokenProp.SetValue(cache, "SilveIT");
-            cacheSessionIDProp.SetValue(cache, "SilveIT");
+            cacheSessionIDProp.SetValue(cache, Guid.NewGuid().ToString());
             R.M[1].Invoke(__instance, null);
             Console.WriteLine("Patched AppToken and SessionID");
 

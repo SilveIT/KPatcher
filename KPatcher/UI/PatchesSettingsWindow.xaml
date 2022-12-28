@@ -56,14 +56,14 @@
             <CheckBox Content="Show console window" IsChecked="{Binding EnableConsole}"/>
             <CheckBox Content="Offline mode (account system replacement)" IsChecked="{Binding OfflineMode}" IsEnabled="{Binding AllowNetwork}"/>
             <CheckBox Content="Patch license (replaces account mode)" IsChecked="{Binding PatchLicense}" IsEnabled="{Binding NotOfflineMode}"/>
-            <CheckBox Content="Enable update system" IsChecked="{Binding EnableUpdates}" IsEnabled="{Binding AllowNetwork}"/>
+            <!--<CheckBox Content="Enable update system" IsChecked="{Binding EnableUpdates}" IsEnabled="{Binding AllowNetwork}"/>-->
             <CheckBox Content="Pass UNKNOWN web requests (in online mode)" IsChecked="{Binding PassUnknownRequests}" IsEnabled="{Binding NotOfflineMode}"/>
-            <TextBlock Margin="15, 10, 15, 0" TextWrapping="Wrap">Blocking network would break the <LineBreak />Noice Cancellation configuration assistant</TextBlock>
-            <CheckBox Content="Block network (not recommended)" IsChecked="{Binding BlockNetwork}"/>
+            <CheckBox Content="Block network" IsChecked="{Binding BlockNetwork}"/>
             <TextBlock Margin="15, 10, 15, 0">Debug Level:</TextBlock>
             <ComboBox ItemsSource="{Binding Source={StaticResource LogLevelProvider}}" SelectedItem="{Binding DebugLevel}"/>
         </StackPanel>
         <Button Name="BtnSaveSettings" Content="Save settings" DockPanel.Dock="Bottom" Height="25" VerticalAlignment="Bottom" Margin="10,0,10,10" Click="BtnSaveSettings_OnClick"/>
         <Button Name="BtnResetSettings" Content="Reset settings" DockPanel.Dock="Bottom" Height="25" VerticalAlignment="Bottom" Margin="10" Click="BtnResetSettings_OnClick"/>
+        <!--<Button Name="BtnTest" Content="Test" DockPanel.Dock="Bottom" Click="BtnTest_OnClick" Height="25" VerticalAlignment="Bottom" Margin="10,0,10,0" />-->
     </DockPanel>
 </Window>

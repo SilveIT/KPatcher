@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -18,6 +19,8 @@ namespace KPatcher
     [PropertyRequired("Krisp.Properties.Resources", "ResourceManager", "Icon loader")]
     public static class Utils
     {
+        private static Random _random = new Random();
+
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetConsoleWindow();
 
@@ -45,6 +48,32 @@ namespace KPatcher
 
         public static void ShowConsole(bool show) => 
             ShowWindow(GetConsoleWindow(), show ? 5 : 0);
+
+        public static string RandomHexDigits(int length)
+        {
+            const string hexChars = "ABCDEF0123456789";
+            return new string(Enumerable.Repeat(hexChars, length).Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
+
+        public static string RandomDigits(int length)
+        {
+            const string hexChars = "0123456789";
+            return new string(Enumerable.Repeat(hexChars, length).Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
+
+        public static string GetRandomHWID() => RandomHexDigits(4);
+
+        public static string GetRandomHardwareIdentifier()
+        {
+            //For example:
+            //Samsung SSD 980 PRO 1TBD31C_0C80_4238_7B3C.ASUSTeK COMPUTER INC.895938754001256
+            var res = "Samsung SSD 980 PRO 1TB";
+            res += RandomHexDigits(4) + '_' + RandomHexDigits(4) + '_' + RandomHexDigits(4) + '_' + RandomHexDigits(4);
+            res += ".ASUSTeK COMPUTER INC.";
+            res += RandomDigits(15);
+
+            return res;
+        }
 
         /// <summary>
         /// Replaces path in the system startup of the target app

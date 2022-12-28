@@ -87,6 +87,7 @@
     <Compile Include="Patches\Account.cs" />
     <Compile Include="Patches\Analytics.cs" />
     <Compile Include="Patches\Environment.cs" />
+    <Compile Include="Patches\InstallationID.cs" />
     <Compile Include="Patches\UI.cs" />
     <Compile Include="Patches\Network.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

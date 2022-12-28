@@ -37,5 +37,19 @@ namespace KPatcher.UI
         private void PatcherSettingsWindow_OnClosing(object sender, CancelEventArgs e) => e.Cancel = !SettingsModel.ProcessClosing();
 
         private void BtnResetSettings_OnClick(object sender, RoutedEventArgs e) => SettingsModel.ResetSettings();
+
+        //private void BtnTest_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        var type = HarmonyLib.AccessTools.TypeByName("Krisp.BackEnd.AccountManager");
+        //        var method = HarmonyLib.AccessTools.Method(type, "<StartFetchUserProfileTimer>b__88_0");
+        //        method.Invoke(AccountManager_SetStatePatch.AccountManagerInstance, new object[] { null, null });
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        Console.WriteLine(exception);
+        //    }
+        //}
     }
 }
