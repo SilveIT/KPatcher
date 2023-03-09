@@ -11,7 +11,7 @@ using Application = System.Windows.Forms.Application;
 
 namespace KPatcher
 {
-    [TypeRequired("Krisp.BackEnd.KrispSDKResponse`1", "Krisp network response generation")]
+    [TypeRequired("Krisp.BackEnd.KrispWebClientResponse`1", "Krisp network response generation")]
     [TypeRequired("RestSharp.RestResponse`1", "Krisp network response generation")]
     [TypeRequired("Krisp.UI.Views.Windows.MessageBox", "Krisp's messagebox usage")]
     [MethodRequired("Krisp.UI.DialogWindowFactory", "CreateDialogWindow", "Krisp's dialog usage")]
@@ -259,6 +259,7 @@ namespace KPatcher
         [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "team", "UserProfileInfo Generator")]                    //19
         [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "settings", "UserProfileInfo Generator")]                //20
         [PropertyRequired("Krisp.BackEnd.UserProfileInfo", "ref_string", "UserProfileInfo Generator")]              //21
+        [PropertyRequired("Krisp.BackEnd.HeadsetVcSetting", "available", "UserProfileInfo Generator")]              //22
         public static class UserProfileInfoGenerator
         {
             // ReSharper disable InconsistentNaming
@@ -276,10 +277,10 @@ namespace KPatcher
                 var updateSettingPreventUpdateProp = R.P[4]; //"Krisp.BackEnd.UpdateSetting", "prevent_update"
 
                 var NCBalanceBalanceProp = R.P[5];
-
+                var HeadsetVCAvailableProp = R.P[22];
                 //var NCOutSettingMicDefaultProp = R.P[6]; //"Krisp.BackEnd.NCOutSetting", "krisp_mic_as_default"
                 var NCOutSettingMinutesProp = R.P[7]; //"Krisp.BackEnd.NCOutSetting", "minutes_settings"
-                //var NCOutSettingHeadsetVCProp = R.P[8]; //"Krisp.BackEnd.NCOutSetting", "headset_vc"
+                var NCOutSettingHeadsetVCProp = R.P[8]; //"Krisp.BackEnd.NCOutSetting", "headset_vc"
                 //var NCOutSettingUltrasonicProp = R.P[9]; //"Krisp.BackEnd.NCOutSetting", "ultrasonic"
 
                 var baseSettingAvailableProp = R.P[10]; //"Krisp.BackEnd.BaseProfileSetting", "available"
@@ -309,14 +310,15 @@ namespace KPatcher
 
                 //var krisp_mic_as_default = Activator.CreateInstance();
                 var minutes_settings = Activator.CreateInstance(R.T[5]); //"Krisp.BackEnd.NCBalance", "balance"
-                //var headset_vc = Activator.CreateInstance();
+                var headset_vc = Activator.CreateInstance(R.T[22]);
                 //var ultrasonic = Activator.CreateInstance();
 
                 NCBalanceBalanceProp.SetValue(minutes_settings, 1337U);
+                HeadsetVCAvailableProp.SetValue(headset_vc, true);
 
                 //NCOutSettingMicDefaultProp.SetValue(nc_out, krisp_mic_as_default);
                 NCOutSettingMinutesProp.SetValue(nc_out, minutes_settings);
-                //NCOutSettingHeadsetVCProp.SetValue(nc_out, headset_vc);
+                NCOutSettingHeadsetVCProp.SetValue(nc_out, headset_vc);
                 //NCOutSettingUltrasonicProp.SetValue(nc_out, ultrasonic);
 
                 baseSettingAvailableProp.SetValue(nc_out, true);

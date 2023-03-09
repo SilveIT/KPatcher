@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 
@@ -13,6 +11,21 @@ namespace KPatcher.Patches
 {
     //These patches are used to block all the telemetry inside target app
     //I guess the chance of leaking any information is quite low now :)
+
+    //System.Void Krisp.AppHelper.SentryHelper::Init(Sentry.SentryOptions)
+    [MethodRequired("Krisp.AppHelper.SentryHelper", "Init", "Sentry DSN patch")]
+    [HarmonyPatch]
+    public class SentryHelper_InitPatch
+    {
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static MethodBase TargetMethod() => R.M[0];
+
+        public static void Postfix(ref dynamic sentryOptions)
+        {
+            sentryOptions.Dsn = "";
+            Console.WriteLine("Patched Sentry DSN");
+        }
+    }
 
     //System.Void Shared.Interops.SafeNativeMethods+P7+Telemetry::.ctor(Shared.Interops.SafeNativeMethods/P7/Client,System.String)
     [TypeRequired("Shared.Interops.SafeNativeMethods+P7+Telemetry", "P7 telemetry patch")]
@@ -110,15 +123,15 @@ namespace KPatcher.Patches
         }
     }
 
-    [MethodRequired("Krisp.Analytics.AnayticEventsSender", "Send", "Krisp.Analytics.AnayticEventsSender:Send method patch")]
+    [MethodRequired("Krisp.Analytics.AnalyticEventsSender", "Send", "Krisp.Analytics.AnalyticEventsSender:Send method patch")]
     [HarmonyPatch]
-    public class AnayticEventsSender_SendPatch
+    public class AnalyticEventsSender_SendPatch
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static MethodBase TargetMethod() => R.M[0];
         public static bool Prefix(ref bool __result, object entries)
         {
-            Console.WriteLine(nameof(AnayticEventsSender_SendPatch));
+            Console.WriteLine(nameof(AnalyticEventsSender_SendPatch));
             __result = true;
             return false;
         }

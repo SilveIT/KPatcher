@@ -110,13 +110,13 @@ namespace KPatcher.Patches
         }
     }
 
-    #region RestSharp.IRestResponse`1<Krisp.BackEnd.KrispSDKResponse`1<T>> Krisp.BackEnd.KrispAwsSDK::DoRequest<T>(Krisp.BackEnd.RequestInfo)
+    #region RestSharp.IRestResponse`1<Krisp.BackEnd.KrispSDKResponse`1<T>> Krisp.BackEnd.KrispWebClient::DoRequest<T>(Krisp.BackEnd.RequestInfo)
 
     /// <summary>
     /// Replaces InstallationInfo synchronization logic when offline
     /// </summary>
-    [TypeRequired("Krisp.BackEnd.InstallationInfo", "KrispAwsSDK:DoRequest<InstallationInfo> method patch")]
-    [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoRequest", "KrispAwsSDK:DoRequest<InstallationInfo> method patch")]
+    [TypeRequired("Krisp.BackEnd.InstallationInfo", "IKrispWebClient:DoRequest<InstallationInfo> method patch")]
+    [MethodRequired("Krisp.BackEnd.KrispWebClient", "DoRequest", "IKrispWebClient:DoRequest<InstallationInfo> method patch")]
     [HarmonyPatch]
     public class DoRequestInstallationInfoPatch
     {
@@ -143,13 +143,13 @@ namespace KPatcher.Patches
 
     #endregion
 
-    #region System.Void Krisp.BackEnd.KrispAwsSDK::DoAsyncRequest<T>(Krisp.BackEnd.RequestInfo,System.Action`2<Krisp.BackEnd.KrispSDKResponse`1<T>,System.Object>,System.Threading.CancellationToken)
+    #region System.Void Krisp.BackEnd.KrispWebClient::DoAsyncRequest<T>(Krisp.BackEnd.RequestInfo,System.Action`2<Krisp.BackEnd.KrispSDKResponse`1<T>,System.Object>,System.Threading.CancellationToken)
 
     /// <summary>
     /// Replaces InstallationInfo synchronization logic when offline
     /// </summary>
-    [TypeRequired("Krisp.BackEnd.InstallationInfo", "KrispAwsSDK:DoAsyncRequest<Krisp.BackEnd.InstallationInfo> method patch")]
-    [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<Krisp.BackEnd.InstallationInfo> method patch")]
+    [TypeRequired("Krisp.BackEnd.InstallationInfo", "IKrispWebClient:DoAsyncRequest<Krisp.BackEnd.InstallationInfo> method patch")]
+    [MethodRequired("Krisp.BackEnd.KrispWebClient", "DoAsyncRequest", "IKrispWebClient:DoAsyncRequest<Krisp.BackEnd.InstallationInfo> method patch")]
     [HarmonyPatch]
     public class DoAsyncRequestInstallationInfoPatch
     {
@@ -177,9 +177,9 @@ namespace KPatcher.Patches
     /// <summary>
     /// VersionInfo request patches
     /// </summary>
-    [TypeRequired("Krisp.BackEnd.VersionInfo", "KrispAwsSDK:DoAsyncRequest<VersionInfo> method patch")]
-    [PropertyRequired("Krisp.BackEnd.VersionRequestInfo", "endpoint", "KrispAwsSDK:DoAsyncRequest<VersionInfo> method patch")]
-    [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<VersionInfo> method patch")]
+    [TypeRequired("Krisp.BackEnd.VersionInfo", "IKrispWebClient:DoAsyncRequest<VersionInfo> method patch")]
+    [PropertyRequired("Krisp.BackEnd.VersionRequestInfo", "endpoint", "IKrispWebClient:DoAsyncRequest<VersionInfo> method patch")]
+    [MethodRequired("Krisp.BackEnd.KrispWebClient", "DoAsyncRequest", "IKrispWebClient:DoAsyncRequest<VersionInfo> method patch")]
     [HarmonyPatch]
     public class DoAsyncRequestVersionInfoPatch
     {
@@ -200,7 +200,7 @@ namespace KPatcher.Patches
         }
     }
 
-    [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<UserProfileInfo> method reverse patch")]
+    [MethodRequired("Krisp.BackEnd.KrispWebClient", "DoAsyncRequest", "IKrispWebClient:DoAsyncRequest<UserProfileInfo> method reverse patch")]
     [HarmonyReversePatch]
     public class DoAsyncRequestUserProfileInfoReversePatch
     {
@@ -215,8 +215,8 @@ namespace KPatcher.Patches
     /// <summary>
     /// Used to patch user account details
     /// </summary>
-    [TypeRequired("Krisp.BackEnd.UserProfileInfo", "KrispAwsSDK:DoAsyncRequest<UserProfileInfo> method patch")]
-    [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<UserProfileInfo> method patch")]
+    [TypeRequired("Krisp.BackEnd.UserProfileInfo", "IKrispWebClient:DoAsyncRequest<UserProfileInfo> method patch")]
+    [MethodRequired("Krisp.BackEnd.KrispWebClient", "DoAsyncRequest", "IKrispWebClient:DoAsyncRequest<UserProfileInfo> method patch")]
     [HarmonyPatch]
     public class DoAsyncRequestUserProfileInfoPatch
     {
@@ -248,11 +248,11 @@ namespace KPatcher.Patches
     /// <summary>
     /// This patch is required to check if everything works fine
     /// </summary>
-    [TypeRequired("Krisp.BackEnd.NotificationInfo", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
-    [TypeRequired("Krisp.BackEnd.NotificationResponse", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
-    [PropertyRequired("Krisp.BackEnd.NotificationInfo", "ref_string", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
-    [PropertyRequired("Krisp.BackEnd.NotificationInfo", "notifications", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
-    [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<NotificationInfo> method patch")]
+    [TypeRequired("Krisp.BackEnd.NotificationInfo", "IKrispWebClient:DoAsyncRequest<NotificationInfo> method patch")]
+    [TypeRequired("Krisp.BackEnd.NotificationResponse", "IKrispWebClient:DoAsyncRequest<NotificationInfo> method patch")]
+    [PropertyRequired("Krisp.BackEnd.NotificationInfo", "ref_string", "IKrispWebClient:DoAsyncRequest<NotificationInfo> method patch")]
+    [PropertyRequired("Krisp.BackEnd.NotificationInfo", "notifications", "IKrispWebClient:DoAsyncRequest<NotificationInfo> method patch")]
+    [MethodRequired("Krisp.BackEnd.KrispWebClient", "DoAsyncRequest", "IKrispWebClient:DoAsyncRequest<NotificationInfo> method patch")]
     [HarmonyPatch]
     public class DoAsyncRequestNotificationInfoPatch
     {
@@ -276,8 +276,8 @@ namespace KPatcher.Patches
     }
 
 
-    [TypeRequired("Krisp.BackEnd.AppTokenInfo", "KrispAwsSDK:DoAsyncRequest<AppTokenInfo> method patch")]
-    [MethodRequired("Krisp.BackEnd.KrispAwsSDK", "DoAsyncRequest", "KrispAwsSDK:DoAsyncRequest<AppTokenInfo> method patch")]
+    [TypeRequired("Krisp.BackEnd.AppTokenInfo", "IKrispWebClient:DoAsyncRequest<AppTokenInfo> method patch")]
+    [MethodRequired("Krisp.BackEnd.KrispWebClient", "DoAsyncRequest", "IKrispWebClient:DoAsyncRequest<AppTokenInfo> method patch")]
     [HarmonyPatch]
     public class DoAsyncRequestAppTokenInfoPatch
     {
